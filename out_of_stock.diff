@@ -1,0 +1,46 @@
+diff --git a/design/themes/responsive/templates/addons/product_variations/hooks/products/product_option_content.pre.tpl b/design/themes/responsive/templates/addons/product_variations/hooks/products/product_option_content.pre.tpl
+index d7d67d75f45..d8bc41f03ec 100644
+--- a/design/themes/responsive/templates/addons/product_variations/hooks/products/product_option_content.pre.tpl
++++ b/design/themes/responsive/templates/addons/product_variations/hooks/products/product_option_content.pre.tpl
+@@ -6,6 +6,7 @@
+         {$show_all_possible_feature_variants = $addons.product_variations.variations_show_all_possible_feature_variants === "YesNo::YES"|enum}
+         {$allow_negative_amount = $allow_negative_amount|default:$settings.General.allow_negative_amount === "YesNo::YES"|enum}
+         {$is_buy_in_advance = $product.out_of_stock_actions === "OutOfStockActions::BUY_IN_ADVANCE"|enum}
++        {$show_out_of_stock_products = $settings.General.show_out_of_stock_products === "YesNo::YES"|enum}
+ 
+         {if $quick_view}
+             {$container = "product_main_info_form_{$obj_prefix}{$quick_view_additional_container}"}
+@@ -83,13 +84,13 @@
+                                     {$variant_product_id = $variant.product.product_id}
+                                 {/if}
+                                 {if $variant_product_id}
+-                                    {if $variant.amount || $allow_negative_amount || $is_buy_in_advance}
++                                    {if $variant.amount || $allow_negative_amount || $is_buy_in_advance || $show_out_of_stock_products}
+                                         <a href="{$product_url|fn_link_attach:"product_id={$variant_product_id}"|fn_url}"
+                                         class="ty-product-options__image--wrapper {if $variant.variant_id == $feature.variant_id}ty-product-options__image--wrapper--active{/if} {if $feature.purpose === $purpose_create_variations || $quick_view}cm-ajax cm-ajax-cache{/if}"
+                                         {if $feature.purpose === $purpose_create_variations || $quick_view}data-ca-target-id="{$container}"{/if}
+                                         >
+                                     {/if}
+-                                        {if $variant.amount || $allow_negative_amount || $is_buy_in_advance}
++                                        {if $variant.amount || $allow_negative_amount || $is_buy_in_advance || $show_out_of_stock_products}
+                                             {$image_class = "ty-product-options__image"}
+                                         {else}
+                                             {$image_class = "ty-product-variations-image-disabled"}
+@@ -106,7 +107,7 @@
+                                                 "height" => $settings.Thumbnails.product_variant_mini_icon_height
+                                             ]
+                                         }
+-                                    {if $variant.amount || $allow_negative_amount || $is_buy_in_advance}
++                                    {if $variant.amount || $allow_negative_amount || $is_buy_in_advance || $show_out_of_stock_products}
+                                         </a>
+                                     {/if}
+                                 {/if}
+@@ -121,7 +122,7 @@
+                     {elseif $feature.feature_style === $feature_style_labels}
+                         <div class="ty-clear-both">
+                             {foreach $feature.variants as $variant}
+-                                {if $variant.product_id && ($variant.product.amount || $allow_negative_amount || $is_buy_in_advance)}
++                                {if $variant.product_id && ($variant.product.amount || $allow_negative_amount || $is_buy_in_advance || $show_out_of_stock_products)}
+                                     <input type="radio"
+                                            name="feature_{$feature.feature_id}"
+                                            value="{$variant.variant_id}"
